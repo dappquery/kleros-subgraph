@@ -1,0 +1,194 @@
+# KlerosLiquid entities
+type NewPhase @entity {
+  id: ID!
+  phase: Int! # uint8
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type NewPeriod @entity {
+  id: ID!
+  disputeID: BigInt! # uint256
+  period: Int! # uint8
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type AppealPossible @entity {
+  id: ID!
+  disputeID: BigInt! # uint256
+  arbitrable: Bytes! # address
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type AppealDecision @entity {
+  id: ID!
+  disputeID: BigInt! # uint256
+  arbitrable: Bytes! # address
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type DisputeCreation @entity {
+  id: ID!
+  disputeID: BigInt! # uint256
+  arbitrable: Bytes! # address
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+  subcourtID: BigInt! # unit256
+  numberOfChoices: BigInt! # unit256
+  period: Int! # Enum
+  lastPeriodChange: BigInt! # unit256
+  drawsInRound: BigInt! # uint256
+  commitsInRound: BigInt! # uint256
+  ruled: Boolean! # Boolean
+}
+
+type StakeSet @entity {
+  id: ID!
+  address: Bytes! # address
+  subcourtID: BigInt! # uint256
+  stake: BigInt! # uint128
+  newTotalStake: BigInt! # uint256
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type Draw @entity {
+  id: ID!
+  address: Bytes! # address
+  disputeID: BigInt! # uint256
+  appeal: BigInt! # uint256
+  voteID: BigInt! # uint256
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type TokenAndETHShift @entity {
+  id: ID!
+  address: Bytes! # address
+  disputeID: BigInt! # uint256
+  tokenAmount: BigInt! # int256
+  ETHAmount: BigInt! # int256
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+# Minime token entities
+type ClaimedTokens @entity {
+  id: ID!
+  token: Bytes! # address
+  controller: Bytes! # address
+  amount: BigInt! # uint256
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type Transfer @entity {
+  id: ID!
+  from: Bytes! # address
+  to: Bytes! # address
+  amount: BigInt! # uint256
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type NewCloneToken @entity {
+  id: ID!
+  cloneToken: Bytes! # address
+  snapshotBlock: BigInt! # uint256
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type Approval @entity {
+  id: ID!
+  owner: Bytes! # address
+  spender: Bytes! # address
+  amount: BigInt! # uint256
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type PolicyUpdate @entity {
+  id: ID!
+  subcourtID: BigInt! # uint256
+  policy: String! # String
+  contractAddress: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt! # unit256
+}
+
+type DisputeStatistic @entity {
+  id: ID!
+  totalDisputes: BigInt! # uint256
+}
+
+type PeriodDisputeStatistic @entity {
+  id: ID! # id is period here
+  period: Int! # uint8
+  totalDisputes: BigInt! #uint256
+}
+
+type DisputePeriodMap @entity {
+  id: ID! # id is dispute ID
+  period: Int! # uint8
+}
+
+type JurorStakeAmount @entity {
+  id: ID! # id
+  juror: Bytes! # address
+  stakeAmount: BigInt! #uint256
+}
+
+type RewardStatistic @entity {
+  id: ID!
+  totalRewardedTokenAmount: BigInt! # uint256
+  totalRewardedEthAmount: BigInt! # uin256
+  totalPunishedTokenAmount: BigInt! # uint256
+}
+
+type SubCourtDisputeStatistic @entity {
+  id: ID!
+  subcourtID: BigInt! # uint256
+  totalDisputes: BigInt! # uint256
+}
+
+type TotalJuror @entity {
+  id: ID!
+  totalJurorCount: BigInt!
+}
+
+type TotalStaked @entity {
+  id: ID!
+  totalStakedAmount: BigInt!
+}
+
+type CourtCount @entity {
+  id: ID!
+  count: BigInt!
+}
+
+type Court @entity {
+  id: ID!
+  subcourtID: BigInt # uint256
+  policy: String # String
+  feeForJuror: BigInt #uint256
+  minStake: BigInt #uint256
+  jurorsForCourtJump: BigInt #uint256
+  alpha: BigInt #uint256
+  disputeCount: BigInt # uint256
+}

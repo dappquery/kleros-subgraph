@@ -1,0 +1,97 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: PolicyRegistry
+    network: mainnet
+    source:
+      address: "0x03a9458d77dd705829fa758c64dbe770385295cc"
+      abi: PolicyRegistry
+      # startBlock: 7305452
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - PolicyUpdate
+      abis:
+        - name: PolicyRegistry
+          file: ./abis/PolicyRegistry.json
+      eventHandlers:
+        - event: PolicyUpdate(indexed uint256,string)
+          handler: handlePolicyUpdate
+      file: ./src/PolicyRegistryMapping.ts
+  - kind: ethereum/contract
+    name: MiniMeToken
+    network: mainnet
+    source:
+      address: "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d"
+      abi: MiniMeToken
+      # startBlock: 5257012
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - ClaimedTokens
+        - Transfer
+        - NewCloneToken
+        - Approval
+      abis:
+        - name: MiniMeToken
+          file: ./abis/MiniMeToken.json
+      eventHandlers:
+        - event: ClaimedTokens(indexed address,indexed address,uint256)
+          handler: handleClaimedTokens
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: NewCloneToken(indexed address,uint256)
+          handler: handleNewCloneToken
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+      file: ./src/MiniMeTokenMapping.ts
+  - kind: ethereum/contract
+    name: KlerosLiquid
+    network: mainnet
+    source:
+      address: "0x988b3A538b618C7A603e1c11Ab82Cd16dbE28069"
+      abi: KlerosLiquid
+      # startBlock: 7303699
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - NewPhase
+        - NewPeriod
+        - StakeSet
+        - Draw
+        - TokenAndETHShift
+        - DisputeCreation
+        - AppealPossible
+        - AppealDecision
+      abis:
+        - name: KlerosLiquid
+          file: ./abis/KlerosLiquid.json
+      eventHandlers:
+        - event: NewPhase(uint8)
+          handler: handleNewPhase
+        - event: NewPeriod(indexed uint256,uint8)
+          handler: handleNewPeriod
+        - event: StakeSet(indexed address,uint256,uint128,uint256)
+          handler: handleStakeSet
+        - event: Draw(indexed address,indexed uint256,uint256,uint256)
+          handler: handleDraw
+        - event: TokenAndETHShift(indexed address,indexed uint256,int256,int256)
+          handler: handleTokenAndETHShift
+        - event: DisputeCreation(indexed uint256,indexed address)
+          handler: handleDisputeCreation
+        - event: AppealPossible(indexed uint256,indexed address)
+          handler: handleAppealPossible
+        - event: AppealDecision(indexed uint256,indexed address)
+          handler: handleAppealDecision
+      # callHandlers:
+      #   - function: createSubcourt(uint96,bool,uint256,uint256,uint256,uint256,uint256[4],uint256)
+      #     handler: handleCreateSubcourt
+      file: ./src/KlerosLiquidMapping.ts

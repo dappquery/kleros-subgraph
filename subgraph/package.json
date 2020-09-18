@@ -1,0 +1,16 @@
+{
+  "name": "kleros",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ napolean0/kleros --access-token 333032acdd83489ba081339596750625",
+    "create-local": "graph create --node http://localhost:8020/ napolean0/kleros",
+    "remove-local": "graph remove --node http://localhost:8020/ napolean0/kleros",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 napolean0/kleros 333032acdd83489ba081339596750625"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.15.0",
+    "@graphprotocol/graph-ts": "^0.15.1"
+  }
+}
