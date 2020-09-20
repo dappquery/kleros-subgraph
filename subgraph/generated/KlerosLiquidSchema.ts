@@ -26,11 +26,11 @@ export class NewPolicy extends Entity {
       "Cannot save NewPhase entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("NewPolicy", id.toString(), this);
+    store.set("NewPhase", id.toString(), this);
   }
 
   static load(id: string): NewPolicy | null {
-    return store.get("NewPolicy", id) as NewPolicy | null;
+    return store.get("NewPhase", id) as NewPolicy | null;
   }
 
   get id(): string {
