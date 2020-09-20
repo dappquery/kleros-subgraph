@@ -3,7 +3,7 @@ import {
   Transfer as TransferEvent,
   NewCloneToken as NewCloneTokenEvent,
   Approval as ApprovalEvent
-} from "../generated/Contract/MiniMeToken"
+} from "../generated/MiniMeToken/MiniMeToken"
 import {
   ClaimedTokens,
   Transfer,
@@ -15,9 +15,9 @@ export function handleClaimedTokens(event: ClaimedTokensEvent): void {
   let entity = new ClaimedTokens(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.token = event.params.token
-  entity.controller = event.params.controller
-  entity.amount = event.params.amount
+  entity.token = event.params._token
+  entity.controller = event.params._controller
+  entity.amount = event.params._amount
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -28,9 +28,9 @@ export function handleTransfer(event: TransferEvent): void {
   let entity = new Transfer(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.amount = event.params.amount
+  entity.from = event.params._from
+  entity.to = event.params._to
+  entity.amount = event.params._amount
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -41,8 +41,8 @@ export function handleNewCloneToken(event: NewCloneTokenEvent): void {
   let entity = new NewCloneToken(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.cloneToken = event.params.cloneToken
-  entity.snapshotBlock = event.params.snapshotBlock
+  entity.cloneToken = event.params._cloneToken
+  entity.snapshotBlock = event.params._snapshotBlock
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -53,9 +53,9 @@ export function handleApproval(event: ApprovalEvent): void {
   let entity = new Approval(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.owner = event.params.owner
-  entity.spender = event.params.spender
-  entity.amount = event.params.amount
+  entity.owner = event.params._owner
+  entity.spender = event.params._spender
+  entity.amount = event.params._amount
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number

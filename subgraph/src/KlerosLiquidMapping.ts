@@ -8,7 +8,7 @@ import {
   AppealPossible as AppealPossibleEvent,
   AppealDecision as AppealDecisionEvent,
   KlerosLiquid, CreateSubcourtCall,
-} from "../generated/Contract/KlerosLiquid"
+} from "../generated/KlerosLiquid/KlerosLiquid"
 import {
   NewPolicy,
   NewPeriod,
@@ -48,7 +48,7 @@ export function handleNewPhase(event: NewPhaseEvent): void {
   let entity = new NewPolicy(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.phase = event.params.phase
+  entity.phase = event.params._phase
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -59,15 +59,15 @@ export function handleNewPeriod(event: NewPeriodEvent): void {
   let entity = new NewPeriod(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.disputeID = event.params.disputeID
-  entity.period = event.params.period
+  entity.disputeID = event.params._disputeID
+  entity.period = event.params._period
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
   entity.save()
 
   // load dispute vs period map
-  let disputeId = event.params.disputeID.toString()
+  let disputeId = event.params._disputeID.toString()
   let entity1 = DisputePeriodMap.load(disputeId)
   if(entity1 == null){
     entity1 = new DisputePeriodMap(disputeId)
@@ -78,20 +78,20 @@ export function handleNewPeriod(event: NewPeriodEvent): void {
     entity2.totalDisputes = entity2.totalDisputes.minus(BigInt.fromI32(1))
     entity2.save()
   }
-  entity1.period = event.params.period
+  entity1.period = event.params._period
   entity1.save()
 
   // Save Period Vs Dispute stats
-  let charCodePeriod = String.fromCharCode(event.params.period)
+  let charCodePeriod = String.fromCharCode(event.params._period)
   log.info('Period', [charCodePeriod])
   let entity2 = PeriodDisputeStatistic.load(charCodePeriod)
   if (entity2 == null) {
     entity2 = new PeriodDisputeStatistic(charCodePeriod)
-    entity2.period = event.params.period
+    entity2.period = event.params._period
     entity2.totalDisputes = BigInt.fromI32(1)
     log.info('Initializing Period', [charCodePeriod])
   } else{
-    entity2.period = event.params.period
+    entity2.period = event.params._period
     entity2.totalDisputes = entity2.totalDisputes.plus(BigInt.fromI32(1))
     log.info('Incrementing dispute count', [charCodePeriod])
   }
@@ -102,10 +102,10 @@ export function handleStakeSet(event: StakeSetEvent): void {
   let entity = new StakeSet(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.address = event.params.address
-  entity.subcourtID = event.params.subcourtID
-  entity.stake = event.params.stake
-  entity.newTotalStake = event.params.newTotalStake
+  entity.address = event.params._address
+  entity.subcourtID = event.params._subcourtID
+  entity.stake = event.params._stake
+  entity.newTotalStake = event.params._newTotalStake
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -126,26 +126,26 @@ export function handleStakeSet(event: StakeSetEvent): void {
   }
 
   // Always update with the latest total stake for a juror
-  let parsedId = event.params.address.toHex();
+  let parsedId = event.params._address.toHex();
   let jurorStakedAmountEntity = JurorStakeAmount.load(parsedId)
   if (jurorStakedAmountEntity == null) {
     jurorStakedAmountEntity = new JurorStakeAmount(parsedId)
-    jurorStakedAmountEntity.juror = event.params.address
-    jurorStakedAmountEntity.stakeAmount = event.params.newTotalStake
+    jurorStakedAmountEntity.juror = event.params._address
+    jurorStakedAmountEntity.stakeAmount = event.params._newTotalStake
 
     // Add newTotalStake amount for first time juror
-    log.debug('sum total staked entity for first time juror', [event.params.newTotalStake.toString()])
-    totalStakedEntity.totalStakedAmount = totalStakedEntity.totalStakedAmount.plus(event.params.newTotalStake)
+    log.debug('sum total staked entity for first time juror', [event.params._newTotalStake.toString()])
+    totalStakedEntity.totalStakedAmount = totalStakedEntity.totalStakedAmount.plus(event.params._newTotalStake)
 
     // First time juror staked
     totalJurorEntity.totalJurorCount = totalJurorEntity.totalJurorCount.plus(BigInt.fromI32(1))
   } else{
-    jurorStakedAmountEntity.juror = event.params.address
+    jurorStakedAmountEntity.juror = event.params._address
     // Subtract old staked amount and sum new staked amount
-    log.debug('sum total staked entity for repeting juror', [event.params.newTotalStake.toString()])
-    totalStakedEntity.totalStakedAmount = (totalStakedEntity.totalStakedAmount.plus(event.params.newTotalStake)).minus(jurorStakedAmountEntity.stakeAmount)
+    log.debug('sum total staked entity for repeting juror', [event.params._newTotalStake.toString()])
+    totalStakedEntity.totalStakedAmount = (totalStakedEntity.totalStakedAmount.plus(event.params._newTotalStake)).minus(jurorStakedAmountEntity.stakeAmount)
     // update juror staked amount
-    jurorStakedAmountEntity.stakeAmount = event.params.newTotalStake
+    jurorStakedAmountEntity.stakeAmount = event.params._newTotalStake
   }
   log.debug('updated total staked', [totalStakedEntity.totalStakedAmount.toString()])
   jurorStakedAmountEntity.save()
@@ -157,10 +157,10 @@ export function handleDraw(event: DrawEvent): void {
   let entity = new Draw(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.address = event.params.address
-  entity.disputeID = event.params.disputeID
-  entity.appeal = event.params.appeal
-  entity.voteID = event.params.voteID
+  entity.address = event.params._address
+  entity.disputeID = event.params._disputeID
+  entity.appeal = event.params._appeal
+  entity.voteID = event.params._voteID
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -171,10 +171,10 @@ export function handleTokenAndETHShift(event: TokenAndETHShiftEvent): void {
   let entity = new TokenAndETHShift(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.address = event.params.address
-  entity.disputeID = event.params.disputeID
-  entity.tokenAmount = event.params.tokenAmount
-  entity.ETHAmount = event.params.ETHAmount
+  entity.address = event.params._address
+  entity.disputeID = event.params._disputeID
+  entity.tokenAmount = event.params._tokenAmount
+  entity.ETHAmount = event.params._ETHAmount
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -191,14 +191,14 @@ export function handleTokenAndETHShift(event: TokenAndETHShiftEvent): void {
   }
   // log.info('handleTokenAndETHShift.entity1 present',
   // [entity1.totalRewardedTokenAmount.toString()])
-  if(event.params.tokenAmount.ge(BigInt.fromI32(0))){
+  if(event.params._tokenAmount.ge(BigInt.fromI32(0))){
     // log.info('handleTokenAndETHShift.entity1 adding amount', [])
-    entity1.totalRewardedTokenAmount = entity1.totalRewardedTokenAmount.plus(event.params.tokenAmount)
-    entity1.totalRewardedEthAmount = entity1.totalRewardedEthAmount.plus(event.params.ETHAmount)
+    entity1.totalRewardedTokenAmount = entity1.totalRewardedTokenAmount.plus(event.params._tokenAmount)
+    entity1.totalRewardedEthAmount = entity1.totalRewardedEthAmount.plus(event.params._ETHAmount)
   } else {
     // log.info('handleTokenAndETHShift.entity1 -ve tokenamount',
     // [event.params.tokenAmount.toString()])
-    entity1.totalPunishedTokenAmount = entity1.totalPunishedTokenAmount.plus(event.params.tokenAmount)
+    entity1.totalPunishedTokenAmount = entity1.totalPunishedTokenAmount.plus(event.params._tokenAmount)
   }
   entity1.save()
 }
@@ -207,8 +207,8 @@ export function handleDisputeCreation(event: DisputeCreationEvent): void {
   let entity = new DisputeCreation(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.disputeID = event.params.disputeID
-  entity.arbitrable = event.params.arbitrable
+  entity.disputeID = event.params._disputeID
+  entity.arbitrable = event.params._arbitrable
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -216,7 +216,7 @@ export function handleDisputeCreation(event: DisputeCreationEvent): void {
   log.debug('binding KlerosLiquid contract', [])
   let contract = KlerosLiquid.bind(event.address)
   log.debug('reading dispute mapping', [])
-  let disputeObj = contract.disputes(event.params.disputeID)
+  let disputeObj = contract.disputes(event.params._disputeID)
   log.debug('dispute mapping is read', [])
   log.debug('disputeObj value0', [disputeObj.value0.toHex()])
   entity.subcourtID = disputeObj.value0
@@ -278,8 +278,8 @@ export function handleAppealPossible(event: AppealPossibleEvent): void {
   let entity = new AppealPossible(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.disputeID = event.params.disputeID
-  entity.arbitrable = event.params.arbitrable
+  entity.disputeID = event.params._disputeID
+  entity.arbitrable = event.params._arbitrable
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
@@ -290,8 +290,8 @@ export function handleAppealDecision(event: AppealDecisionEvent): void {
   let entity = new AppealDecision(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.disputeID = event.params.disputeID
-  entity.arbitrable = event.params.arbitrable
+  entity.disputeID = event.params._disputeID
+  entity.arbitrable = event.params._arbitrable
   entity.contractAddress = event.address
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number

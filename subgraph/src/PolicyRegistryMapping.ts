@@ -15,7 +15,7 @@ import {
 
 import {
   PolicyUpdate as NewPolicyUpdateEvent,
-} from "../generated/Contract/PolicyRegistry"
+} from "../generated/PolicyRegistry/PolicyRegistry"
 import {
   PolicyUpdate,
 } from "../generated/PolicyRegistrySchema"
@@ -25,8 +25,8 @@ export function handlePolicyUpdate(event: NewPolicyUpdateEvent): void {
   let entity = new PolicyUpdate(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.subcourtID = event.params.subcourtID
-  entity.policy = event.params.policy
+  entity.subcourtID = event.params._subcourtID
+  entity.policy = event.params._policy
   // let hash = entity.policy.split('"/ipfs/"')[1]
   // log.debug('handlePolicyUpdate: hash ', [hash])
   // let data = ipfs.cat(hash)
@@ -39,16 +39,16 @@ export function handlePolicyUpdate(event: NewPolicyUpdateEvent): void {
   entity.timestamp = event.block.timestamp
   entity.blockNumber = event.block.number
   entity.save()
-  let court = Court.load(event.params.subcourtID.toHexString())
+  let court = Court.load(event.params._subcourtID.toHexString())
   if (court == null) {
-    court = new Court(event.params.subcourtID.toHexString())
+    court = new Court(event.params._subcourtID.toHexString())
   }
-  court.subcourtID = event.params.subcourtID
+  court.subcourtID = event.params._subcourtID
   log.debug('handlePolicyUpdate: Policy for subcourt {} is {} ', [
-    event.params.subcourtID.toHexString(),
-    event.params.policy,
+    event.params._subcourtID.toHexString(),
+    event.params._policy,
   ])
-  court.policy = event.params.policy
+  court.policy = event.params._policy
   court.save()
 
 }
